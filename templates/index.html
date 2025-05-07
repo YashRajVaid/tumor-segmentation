@@ -1,0 +1,134 @@
+<!-- templates/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tumor Segmentation using Region Splitting and Merging</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Tumor Image Segmentation</h1>
+        <form id="imageForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image">Upload Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+
+            <div class="form-group">
+                <label for="threshold_mean">Threshold_Mean:</label>
+                <input type="range" id="threshold_mean" name="threshold_mean" min="0.1" max="10" step = 0.1 value="0.2">
+                <span id="threshold_meanValue">0.1</span>
+            </div>
+
+            <div class="form-group">
+                <label for="threshold_std">Threshold_STD:</label>
+                <input type="range" id="threshold_std" name="threshold_std" min="0.01" max="10" step = 0.01 value="0.05">
+                <span id="threshold_stdValue">0.01</span>
+            </div>
+
+            <div class="form-group">
+                <label for="min_size">Min Region Size:</label>
+                <input type="range" id="min_size" name="min_size" min="5" max="50" value="10">
+                <span id="minSizeValue">10</span>
+            </div>
+
+            <button type="submit" class="submit-btn">Segment Image</button>
+        </form>
+
+        <div id="segmentedImageContainer">
+            <h2>Segmented Image:</h2>
+            <img id="segmentedImage" src="" alt="Segmented Image" class="segmented-image">
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Update slider values dynamically
+            $('#threshold_mean').on('input', function() {
+                $('#threshold_meanValue').text($(this).val());
+            });
+            $('#threshold_std').on('input', function() {
+                $('#threshold_stdValue').text($(this).val());
+            });
+            $('#min_size').on('input', function() {
+                $('#minSizeValue').text($(this).val());
+            });
+
+            // Form submission handling
+            $("#imageForm").submit(function(e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                formData.append("threshold_mean", $("#threshold_mean").val());
+                formData.append("threshold_std", $("#threshold_std").val());
+                formData.append("min_size", $("#min_size").val());
+
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var img = "data:image/png;base64," + data.segmented_img;
+                        $("#segmentedImage").attr("src", img);
+                        $("#segmentedImageContainer").show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Region Splitting and Merging</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Tumor Image Segmentation</h2>
+        <form action="/segment" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload Image</label>
+                <input class="form-control" type="file" name="image" required>
+            </div>
+            <div class="mb-3">
+                <label for="threshold" class="form-label">Split Threshold: <span id="threshVal">10</span></label>
+                <input type="range" class="form-range" name="threshold" min="1" max="50" value="10" oninput="threshVal.innerText = this.value">
+            </div>
+            <div class="mb-3">
+                <label for="min_size" class="form-label">Minimum Region Size: <span id="minVal">16</span></label>
+                <input type="range" class="form-range" name="min_size" min="4" max="64" value="16" oninput="minVal.innerText = this.value">
+            </div>
+            <div class="mb-3">
+                <label for="merge_threshold" class="form-label">Merge Threshold: <span id="mergeVal">15</span></label>
+                <input type="range" class="form-range" name="merge_threshold" min="1" max="50" value="15" oninput="mergeVal.innerText = this.value">
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Segment Image</button>
+            </div>
+        </form>
+
+        {% if original and segmented %}
+        <div class="row mt-5">
+            <div class="col-md-6 text-center">
+                <h5>Original Image</h5>
+                <img src="/{{ original }}" class="img-fluid rounded border">
+            </div>
+            <div class="col-md-6 text-center">
+                <h5>Segmented Image</h5>
+                <img src="/{{ segmented }}" class="img-fluid rounded border">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
