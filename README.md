@@ -26,3 +26,7 @@ The Flask app provides:
   - `Merge Threshold`: Determines whether adjacent regions should be merged based on similarity.
   - `Minimum Region Size`: Avoids processing insignificant small regions.
 - A “Submit” button that triggers segmentation and returns the processed image.
+  
+<img width="1318" alt="image" src="https://github.com/user-attachments/assets/7c9833c5-d833-4f01-aa97-b33aaa458062" />
+
+<img width="1275" alt="image" src="https://github.com/user-attachments/assets/c8481cec-dc16-44f1-a59e-9b7dc4b1aade" />
